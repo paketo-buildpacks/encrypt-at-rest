@@ -12,6 +12,13 @@ The buildpack will do the following:
 * Removes the source code in `<APPLICATION_ROOT>`
 * Contributes a `profile.d` script the decrypts the application before launching
 
+## Configuration
+| Environment Variable | Description
+| -------------------- | -----------
+| `$BP_EAR_KEY` | Configure the AES key to use at build time.
+| `$BPL_EAR_KEY` | Configure the AES key to use at launch time.
+
+
 ## License
 This buildpack is released under version 2.0 of the [Apache License][a].
 
