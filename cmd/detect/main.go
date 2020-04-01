@@ -16,5 +16,15 @@
 
 package main
 
+import (
+	"github.com/paketo-buildpacks/encrypt-at-rest/ear"
+	"github.com/paketo-buildpacks/libpak"
+)
+
 func main() {
+	libpak.Detect(ear.Detect{
+		KeyProviders: []ear.KeyProvider{
+			ear.EnvironmentVariableKeyProvider{},
+		},
+	})
 }

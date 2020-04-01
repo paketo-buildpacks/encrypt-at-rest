@@ -8,4 +8,5 @@ if [[ -d ../go-cache ]]; then
 fi
 
 GOOS="linux" go build -ldflags='-s -w' -o bin/build github.com/paketo-buildpacks/encrypt-at-rest/cmd/build
+GOOS="linux" go build -ldflags='-s -w' -o bin/decrypt-application github.com/paketo-buildpacks/encrypt-at-rest/cmd/decrypt-application
 GOOS="linux" go build -ldflags='-s -w' -o bin/detect github.com/paketo-buildpacks/encrypt-at-rest/cmd/detect

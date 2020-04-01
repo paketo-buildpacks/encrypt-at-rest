@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package main
+package ear_test
 
 import (
-	"os"
+	"testing"
 
-	"github.com/paketo-buildpacks/encrypt-at-rest/ear"
-	"github.com/paketo-buildpacks/libpak"
-	"github.com/paketo-buildpacks/libpak/bard"
+	"github.com/sclevine/spec"
+	"github.com/sclevine/spec/report"
 )
 
-func main() {
-	logger := bard.NewLogger(os.Stdout)
-
-	libpak.Build(ear.Build{
-		Logger: logger,
-		KeyProviders: []ear.KeyProvider{
-			ear.EnvironmentVariableKeyProvider{Logger: logger},
-		},
-	})
+func TestUnit(t *testing.T) {
+	suite := spec.New("ear", spec.Report(report.Terminal{}))
+	suite("Build", testBuild)
+	suite("Decrypt", testDecrypt)
+	suite("Detect", testDetect)
+	suite("Encrypt", testEncrypt)
+	suite("KeyProvider", testKeyProvider)
+	suite.Run(t)
 }

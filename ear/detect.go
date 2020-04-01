@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 
-package main
+package ear
 
 import (
-	"os"
+	"fmt"
 
-	"github.com/paketo-buildpacks/encrypt-at-rest/ear"
-	"github.com/paketo-buildpacks/libpak"
-	"github.com/paketo-buildpacks/libpak/bard"
+	"github.com/buildpacks/libcnb"
 )
 
-func main() {
-	logger := bard.NewLogger(os.Stdout)
+type Detect struct {
+	KeyProviders []KeyProvider
+}
 
-	libpak.Build(ear.Build{
-		Logger: logger,
-		KeyProviders: []ear.KeyProvider{
-			ear.EnvironmentVariableKeyProvider{Logger: logger},
-		},
-	})
+func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error) {
+	result := libcnb.DetectResult{}
+
+	for _, k := range d.KeyProviders {
+		if err := k.Detect(context, &result); err != nil {
+			return libcnb.DetectResult{}, fmt.Errorf("unable to detect\n%w", err)
+		}
+	}
+
+	return result, nil
 }

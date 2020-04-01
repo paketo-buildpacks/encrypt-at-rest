@@ -4,11 +4,13 @@ The Paketo Encrypt At Rest Buildpack is a Cloud Native Buildpack that AES encryp
 ## Behavior
 This buildpack will participate any of the following conditions are met
 
-*
+* `$BP_EAR_KEY` is set to a hex-encoded AES key
 
 The buildpack will do the following:
 
-*
+* AES encrypts the contents of `<APPLICATION_ROOT>` using Cipher Feedback (CFB) mode and a randomly generated initial vector
+* Removes the source code in `<APPLICATION_ROOT>`
+* Contributes a `profile.d` script the decrypts the application before launching
 
 ## License
 This buildpack is released under version 2.0 of the [Apache License][a].

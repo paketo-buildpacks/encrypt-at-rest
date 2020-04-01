@@ -16,7 +16,7 @@ api = "0.2"
 
 [buildpack]
 id      = "paketo-buildpacks/encrypt-at-rest"
-name    = "Paketo Encrypt at Rest Buildpack"
+name    = "Paketo Encrypt-at-Rest Buildpack"
 version = "{{.version}}"
 
 [[stacks]]
@@ -29,6 +29,7 @@ include-files = [
   "NOTICE",
   "README.md",
   "bin/build",
+  "bin/decrypt-application",
   "bin/detect",
   "buildpack.toml",
 ]
