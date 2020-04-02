@@ -17,10 +17,8 @@
 package decrypt_test
 
 import (
-	"archive/tar"
-	"crypto/aes"
-	"crypto/cipher"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/hex"
 	"io"
 	"io/ioutil"
@@ -28,75 +26,81 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/minio/sio"
 	. "github.com/onsi/gomega"
 	"github.com/paketo-buildpacks/encrypt-at-rest/decrypt"
+	"github.com/paketo-buildpacks/libpak/crush"
 	"github.com/sclevine/spec"
+	"golang.org/x/crypto/hkdf"
 )
 
 func testDecrypt(t *testing.T, context spec.G, it spec.S) {
 	var (
 		Expect = NewWithT(t).Expect
 
-		decrypted     string
-		encrypted     string
-		initialVector string
+		decryptedPath string
+		encryptedPath string
+		saltPath      string
 	)
 
 	it.Before(func() {
 		var err error
 
-		decrypted, err = ioutil.TempDir("", "decrypt-decrypted")
+		decryptedPath, err = ioutil.TempDir("", "decrypt-decrypted")
 		Expect(err).NotTo(HaveOccurred())
 
 		f, err := ioutil.TempFile("", "decrypt-encrypted")
 		Expect(err).NotTo(HaveOccurred())
 		Expect(f.Close()).To(Succeed())
-		encrypted = f.Name()
+		encryptedPath = f.Name()
 
-		f, err = ioutil.TempFile("", "decrypt-initial-vector")
+		f, err = ioutil.TempFile("", "decrypt-salt")
 		Expect(err).NotTo(HaveOccurred())
 		Expect(f.Close()).To(Succeed())
-		initialVector = f.Name()
+		saltPath = f.Name()
 	})
 
 	it.After(func() {
-		Expect(os.RemoveAll(decrypted)).To(Succeed())
-		Expect(os.RemoveAll(encrypted)).To(Succeed())
-		Expect(os.RemoveAll(initialVector)).To(Succeed())
+		Expect(os.RemoveAll(decryptedPath)).To(Succeed())
+		Expect(os.RemoveAll(encryptedPath)).To(Succeed())
+		Expect(os.RemoveAll(saltPath)).To(Succeed())
 	})
 
 	it("decrypts application", func() {
-		out, err := os.OpenFile(encrypted, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+		master, err := hex.DecodeString("E48F0660412A993E62FB11CA086C2D353C95359AD3A3480E778FBA43DB694E60")
 		Expect(err).NotTo(HaveOccurred())
 
-		key, err := hex.DecodeString("E48F0660412A993E62FB11CA086C2D353C95359AD3A3480E778FBA43DB694E60")
+		var salt [32]byte
+		_, err = io.ReadFull(rand.Reader, salt[:])
+		Expect(err).NotTo(HaveOccurred())
+		Expect(ioutil.WriteFile(saltPath, salt[:], 0644)).To(Succeed())
+
+		var key [32]byte
+		kdf := hkdf.New(sha256.New, master, salt[:], nil)
+		_, err = io.ReadFull(kdf, key[:])
 		Expect(err).NotTo(HaveOccurred())
 
-		block, err := aes.NewCipher(key)
+		out, err := os.OpenFile(encryptedPath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 		Expect(err).NotTo(HaveOccurred())
 
-		iv := make([]byte, aes.BlockSize)
-		_, err = io.ReadFull(rand.Reader, iv)
-		Expect(err).NotTo(HaveOccurred())
-		Expect(ioutil.WriteFile(initialVector, iv, 0644)).To(Succeed())
-
-		t := tar.NewWriter(cipher.StreamWriter{S: cipher.NewCFBEncrypter(block, iv), W: out})
-		err = t.WriteHeader(&tar.Header{Name: "fixture-marker"})
-		Expect(err).NotTo(HaveOccurred())
-		_, err = t.Write([]byte{})
+		w, err := sio.EncryptWriter(out, sio.Config{Key: key[:]})
 		Expect(err).NotTo(HaveOccurred())
 
-		Expect(t.Close()).To(Succeed())
-		Expect(out.Close()).To(Succeed())
+		file := filepath.Join(decryptedPath, "fixture-marker")
+		Expect(ioutil.WriteFile(file, []byte{}, 0644)).To(Succeed())
+		Expect(crush.CreateTar(w, decryptedPath)).To(Succeed())
+		Expect(os.RemoveAll(file)).To(Succeed())
+
+		Expect(w.Close()).To(Succeed())
 
 		d := decrypt.Decrypt{
-			DecryptedApplicationPath: decrypted,
-			EncryptedApplicationPath: encrypted,
-			InitialVectorPath:        initialVector,
-			Key:                      key,
+			DecryptedApplicationPath: decryptedPath,
+			EncryptedApplicationPath: encryptedPath,
+			Key:                      master,
+			SaltPath:                 saltPath,
 		}
 
 		Expect(d.Execute()).To(Succeed())
-		Expect(filepath.Join(decrypted, "fixture-marker")).To(BeARegularFile())
+		Expect(filepath.Join(decryptedPath, "fixture-marker")).To(BeARegularFile())
 	})
 }

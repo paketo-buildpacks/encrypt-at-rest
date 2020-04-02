@@ -1,6 +1,6 @@
 printf "Decrypting application\n"
 
 decrypt-application \
+  --decrypted-application "{{.decryptedApplication}}" \
   --encrypted-application "{{.encryptedApplication}}" \
-  --initial-vector "{{.initialVector}}" \
-  --decrypted-application "{{.decryptedApplication}}"
+  --salt "{{.salt}}"

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ear_test
+package dare_test
 
 import (
 	"fmt"
@@ -25,7 +25,7 @@ import (
 
 	"github.com/buildpacks/libcnb"
 	. "github.com/onsi/gomega"
-	"github.com/paketo-buildpacks/encrypt-at-rest/ear"
+	"github.com/paketo-buildpacks/encrypt-at-rest/dare"
 	"github.com/sclevine/spec"
 )
 
@@ -61,7 +61,7 @@ func testDecrypt(t *testing.T, context spec.G, it spec.S) {
 		Expect(os.MkdirAll(filepath.Join(ctx.Buildpack.Path, "bin"), 0755)).To(Succeed())
 		Expect(ioutil.WriteFile(filepath.Join(ctx.Buildpack.Path, "bin", "decrypt-application"), []byte{}, 0755)).To(Succeed())
 
-		d := ear.NewDecrypt(ctx.Application.Path, ctx.Buildpack, &ctx.Plan)
+		d := dare.NewDecrypt(ctx.Application.Path, ctx.Buildpack, &ctx.Plan)
 		layer, err := ctx.Layers.Layer("test-layer")
 		Expect(err).NotTo(HaveOccurred())
 
@@ -73,13 +73,13 @@ func testDecrypt(t *testing.T, context spec.G, it spec.S) {
 		Expect(layer.Profile["decrypt-application.sh"]).To(Equal(fmt.Sprintf(`printf "Decrypting application\n"
 
 decrypt-application \
+  --decrypted-application "%s" \
   --encrypted-application "%s" \
-  --initial-vector "%s" \
-  --decrypted-application "%s"
+  --salt "%s"
 `,
-			filepath.Join(ctx.Layers.Path, "encrypt", "application.tar.aes"),
-			filepath.Join(ctx.Layers.Path, "encrypt", "initial-vector"),
-			ctx.Application.Path)))
+			ctx.Application.Path,
+			filepath.Join(ctx.Layers.Path, "encrypt", "application.tar.dare"),
+			filepath.Join(ctx.Layers.Path, "encrypt", "salt"))))
 	})
 
 }

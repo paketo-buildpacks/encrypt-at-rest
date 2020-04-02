@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ear
+package dare
 
 import (
 	"encoding/hex"

@@ -45,7 +45,7 @@ func main() {
 		flagSet := pflag.NewFlagSet("Decrypt Application", pflag.ExitOnError)
 		flagSet.StringVar(&d.DecryptedApplicationPath, "decrypted-application", "", "path to write decrypted application to")
 		flagSet.StringVar(&d.EncryptedApplicationPath, "encrypted-application", "", "path to read encrypted application from")
-		flagSet.StringVar(&d.InitialVectorPath, "initial-vector", "", "path to file containing the initial vector used for decryption")
+		flagSet.StringVar(&d.SaltPath, "salt", "", "path to file containing the salt used for decryption")
 
 		if err := flagSet.Parse(os.Args[1:]); err != nil {
 			return fmt.Errorf("unable to parse flags\n%w", err)

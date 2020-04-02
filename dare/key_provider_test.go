@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ear_test
+package dare_test
 
 import (
 	"encoding/hex"
@@ -23,7 +23,7 @@ import (
 
 	"github.com/buildpacks/libcnb"
 	. "github.com/onsi/gomega"
-	"github.com/paketo-buildpacks/encrypt-at-rest/ear"
+	"github.com/paketo-buildpacks/encrypt-at-rest/dare"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/sclevine/spec"
 )
@@ -36,7 +36,7 @@ func testKeyProvider(t *testing.T, context spec.G, it spec.S) {
 	context("Build", func() {
 		context("EnvironmentVariableKeyProvider", func() {
 			var (
-				kp ear.EnvironmentVariableKeyProvider
+				kp dare.EnvironmentVariableKeyProvider
 			)
 			context("BP_EAR_KEY", func() {
 				it.Before(func() {
@@ -76,7 +76,7 @@ func testKeyProvider(t *testing.T, context spec.G, it spec.S) {
 
 		context("EnvironmentVariableKeyProvider", func() {
 			var (
-				kp ear.EnvironmentVariableKeyProvider
+				kp dare.EnvironmentVariableKeyProvider
 			)
 
 			it("does not modify if it does not detect", func() {

@@ -19,7 +19,7 @@ package main
 import (
 	"os"
 
-	"github.com/paketo-buildpacks/encrypt-at-rest/ear"
+	"github.com/paketo-buildpacks/encrypt-at-rest/dare"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
 )
@@ -27,10 +27,10 @@ import (
 func main() {
 	logger := bard.NewLogger(os.Stdout)
 
-	libpak.Build(ear.Build{
+	libpak.Build(dare.Build{
 		Logger: logger,
-		KeyProviders: []ear.KeyProvider{
-			ear.EnvironmentVariableKeyProvider{Logger: logger},
+		KeyProviders: []dare.KeyProvider{
+			dare.EnvironmentVariableKeyProvider{Logger: logger},
 		},
 	})
 }

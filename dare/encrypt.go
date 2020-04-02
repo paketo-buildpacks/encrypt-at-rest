@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package ear
+package dare
 
 import (
-	"crypto/aes"
-	"crypto/cipher"
 	"crypto/rand"
+	"crypto/sha256"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -27,10 +26,12 @@ import (
 	"path/filepath"
 
 	"github.com/buildpacks/libcnb"
+	"github.com/minio/sio"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
 	"github.com/paketo-buildpacks/libpak/crush"
 	"github.com/paketo-buildpacks/libpak/sherpa"
+	"golang.org/x/crypto/hkdf"
 )
 
 type Encrypt struct {
@@ -58,36 +59,42 @@ func (e Encrypt) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 	e.LayerContributor.Logger = e.Logger
 
 	layer, err := e.LayerContributor.Contribute(layer, func() (libcnb.Layer, error) {
-		block, err := aes.NewCipher(e.Key)
-		if err != nil {
-			return libcnb.Layer{}, fmt.Errorf("unable to create new cipher\n%w", err)
+		var salt [32]byte
+		if _, err := io.ReadFull(rand.Reader, salt[:]); err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to generate salt\n%w", err)
 		}
 
-		iv := make([]byte, aes.BlockSize)
-		_, err = io.ReadFull(rand.Reader, iv)
+		e.Logger.Body("Writing salt")
+		file := filepath.Join(layer.Path, "salt")
+		if err := ioutil.WriteFile(file, salt[:], 0644); err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to write %s\n%w", file, err)
+		}
 
-		file := filepath.Join(layer.Path, "application.tar.aes")
+		var key [32]byte
+		kdf := hkdf.New(sha256.New, e.Key, salt[:], nil)
+		if _, err := io.ReadFull(kdf, key[:]); err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to derive encryption key\n%w", err)
+		}
+
+		file = filepath.Join(layer.Path, "application.tar.dare")
 		out, err := os.OpenFile(file, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 		if err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to open %s\n%w", file, err)
 		}
 		defer out.Close()
 
-		w := cipher.StreamWriter{
-			S: cipher.NewCFBEncrypter(block, iv),
-			W: out,
+		w, err := sio.EncryptWriter(out, sio.Config{Key: key[:]})
+		if err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to create encrypted writer\n%w", err)
 		}
-		defer w.Close()
 
 		e.Logger.Bodyf("Encrypting to %s", file)
 		if err := crush.CreateTar(w, e.ApplicationPath); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to create TAR from %s\n%w", e.ApplicationPath, err)
 		}
 
-		e.Logger.Body("Writing initial vector")
-		file = filepath.Join(layer.Path, "initial-vector")
-		if err := ioutil.WriteFile(file, iv, 0644); err != nil {
-			return libcnb.Layer{}, fmt.Errorf("unable to write %s\n%w", file, err)
+		if err = w.Close(); err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to finalize encryption\n%w", err)
 		}
 
 		layer.Launch = true

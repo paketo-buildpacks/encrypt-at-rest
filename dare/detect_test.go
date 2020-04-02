@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ear_test
+package dare_test
 
 import (
 	"fmt"
@@ -22,8 +22,8 @@ import (
 
 	"github.com/buildpacks/libcnb"
 	. "github.com/onsi/gomega"
-	"github.com/paketo-buildpacks/encrypt-at-rest/ear"
-	"github.com/paketo-buildpacks/encrypt-at-rest/ear/mocks"
+	"github.com/paketo-buildpacks/encrypt-at-rest/dare"
+	"github.com/paketo-buildpacks/encrypt-at-rest/dare/mocks"
 	"github.com/sclevine/spec"
 	"github.com/stretchr/testify/mock"
 )
@@ -33,7 +33,7 @@ func testDetect(t *testing.T, context spec.G, it spec.S) {
 		Expect = NewWithT(t).Expect
 
 		ctx         libcnb.DetectContext
-		detect      ear.Detect
+		detect      dare.Detect
 		keyProvider *mocks.KeyProvider
 	)
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ear_test
+package dare_test
 
 import (
 	"testing"
@@ -24,7 +24,7 @@ import (
 )
 
 func TestUnit(t *testing.T) {
-	suite := spec.New("ear", spec.Report(report.Terminal{}))
+	suite := spec.New("dare", spec.Report(report.Terminal{}))
 	suite("Build", testBuild)
 	suite("Decrypt", testDecrypt)
 	suite("Detect", testDetect)

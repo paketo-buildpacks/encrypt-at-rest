@@ -17,26 +17,34 @@
 package decrypt
 
 import (
-	"crypto/aes"
-	"crypto/cipher"
+	"crypto/sha256"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 
+	"github.com/minio/sio"
 	"github.com/paketo-buildpacks/libpak/crush"
+	"golang.org/x/crypto/hkdf"
 )
 
 type Decrypt struct {
 	DecryptedApplicationPath string
 	EncryptedApplicationPath string
-	InitialVectorPath        string
 	Key                      []byte
+	SaltPath                 string
 }
 
 func (d Decrypt) Execute() error {
-	block, err := aes.NewCipher(d.Key)
+	salt, err := ioutil.ReadFile(d.SaltPath)
 	if err != nil {
-		return fmt.Errorf("unable to create new cipher\n%w", err)
+		return fmt.Errorf("uanble to read salt\n%w", err)
+	}
+
+	var key [32]byte
+	kdf := hkdf.New(sha256.New, d.Key, salt[:], nil)
+	if _, err := io.ReadFull(kdf, key[:]); err != nil {
+		return fmt.Errorf("unable to derive encryption key\n%w", err)
 	}
 
 	in, err := os.Open(d.EncryptedApplicationPath)
@@ -45,19 +53,13 @@ func (d Decrypt) Execute() error {
 	}
 	defer in.Close()
 
-	iv, err := ioutil.ReadFile(d.InitialVectorPath)
+	r, err := sio.DecryptReader(in, sio.Config{Key: key[:]})
 	if err != nil {
-		return fmt.Errorf("unable to open %s\n%w", d.InitialVectorPath, err)
+		return fmt.Errorf("unable to create encrypted reader\n%w", err)
 	}
-
-	r := cipher.StreamReader{
-		S: cipher.NewCFBDecrypter(block, iv),
-		R: in,
-	}
-	defer in.Close()
 
 	if err := crush.ExtractTar(r, d.DecryptedApplicationPath, 0); err != nil {
-		return fmt.Errorf("unable to extract TAR to %s\n%w", d.DecryptedApplicationPath, err)
+		return fmt.Errorf("unable to extract TAR %s to %s\n%w", d.EncryptedApplicationPath, d.DecryptedApplicationPath, err)
 	}
 
 	return nil

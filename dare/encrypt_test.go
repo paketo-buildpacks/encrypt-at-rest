@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package ear_test
+package dare_test
 
 import (
 	"archive/tar"
-	"bytes"
-	"crypto/aes"
-	"crypto/cipher"
+	"crypto/sha256"
 	"encoding/hex"
 	"io"
 	"io/ioutil"
@@ -29,9 +27,11 @@ import (
 	"testing"
 
 	"github.com/buildpacks/libcnb"
+	"github.com/minio/sio"
 	. "github.com/onsi/gomega"
-	"github.com/paketo-buildpacks/encrypt-at-rest/ear"
+	"github.com/paketo-buildpacks/encrypt-at-rest/dare"
 	"github.com/sclevine/spec"
+	"golang.org/x/crypto/hkdf"
 )
 
 func testEncrypt(t *testing.T, context spec.G, it spec.S) {
@@ -59,10 +59,10 @@ func testEncrypt(t *testing.T, context spec.G, it spec.S) {
 	it("contributes encrypt", func() {
 		Expect(ioutil.WriteFile(filepath.Join(ctx.Application.Path, "fixture-marker"), []byte{}, 0644)).To(Succeed())
 
-		key, err := hex.DecodeString("E48F0660412A993E62FB11CA086C2D353C95359AD3A3480E778FBA43DB694E60")
+		master, err := hex.DecodeString("E48F0660412A993E62FB11CA086C2D353C95359AD3A3480E778FBA43DB694E60")
 		Expect(err).NotTo(HaveOccurred())
 
-		e, err := ear.NewEncrypt(ctx.Application.Path, key)
+		e, err := dare.NewEncrypt(ctx.Application.Path, master)
 		Expect(err).NotTo(HaveOccurred())
 
 		layer, err := ctx.Layers.Layer("test-layer")
@@ -72,16 +72,22 @@ func testEncrypt(t *testing.T, context spec.G, it spec.S) {
 		Expect(err).NotTo(HaveOccurred())
 
 		Expect(layer.Launch).To(BeTrue())
-		Expect(filepath.Join(layer.Path, "application.tar.aes")).To(BeARegularFile())
-		Expect(filepath.Join(layer.Path, "initial-vector")).To(BeARegularFile())
+		Expect(filepath.Join(layer.Path, "application.tar.dare")).To(BeARegularFile())
+		Expect(filepath.Join(layer.Path, "salt")).To(BeARegularFile())
 
-		b, err := ioutil.ReadFile(filepath.Join(layer.Path, "application.tar.aes"))
+		salt, err := ioutil.ReadFile(filepath.Join(layer.Path, "salt"))
 		Expect(err).NotTo(HaveOccurred())
-		iv, err := ioutil.ReadFile(filepath.Join(layer.Path, "initial-vector"))
+
+		var key [32]byte
+		kdf := hkdf.New(sha256.New, master, salt[:], nil)
+		_, err = io.ReadFull(kdf, key[:])
 		Expect(err).NotTo(HaveOccurred())
-		block, err := aes.NewCipher(key)
+
+		in, err := os.Open(filepath.Join(layer.Path, "application.tar.dare"))
 		Expect(err).NotTo(HaveOccurred())
-		r := cipher.StreamReader{S: cipher.NewCFBDecrypter(block, iv), R: bytes.NewBuffer(b)}
+
+		r, err := sio.DecryptReader(in, sio.Config{Key: key[:]})
+		Expect(err).NotTo(HaveOccurred())
 
 		var files []string
 		t := tar.NewReader(r)

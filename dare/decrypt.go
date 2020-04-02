@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ear
+package dare
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ import (
 	"path/filepath"
 
 	"github.com/buildpacks/libcnb"
-	_ "github.com/paketo-buildpacks/encrypt-at-rest/ear/statik"
+	_ "github.com/paketo-buildpacks/encrypt-at-rest/dare/statik"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
 	"github.com/paketo-buildpacks/libpak/sherpa"
@@ -57,8 +57,8 @@ func (d Decrypt) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 		e := filepath.Join(filepath.Dir(layer.Path), "encrypt")
 		s, err := sherpa.TemplateFile("/decrypt-application.sh", map[string]interface{}{
 			"decryptedApplication": d.ApplicationPath,
-			"encryptedApplication": filepath.Join(e, "application.tar.aes"),
-			"initialVector":        filepath.Join(e, "initial-vector"),
+			"encryptedApplication": filepath.Join(e, "application.tar.dare"),
+			"salt":                 filepath.Join(e, "salt"),
 		})
 		if err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to load decrypt-application.sh\n%w", err)
