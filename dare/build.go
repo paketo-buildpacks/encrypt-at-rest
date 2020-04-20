@@ -31,7 +31,7 @@ type Build struct {
 
 func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 	b.Logger.Title(context.Buildpack)
-	result := libcnb.BuildResult{}
+	result := libcnb.NewBuildResult()
 
 	pr := libpak.PlanEntryResolver{Plan: context.Plan}
 
@@ -54,7 +54,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		e.Logger = b.Logger
 		result.Layers = append(result.Layers, e)
 
-		d := NewDecrypt(context.Application.Path, context.Buildpack, &result.Plan)
+		d := NewDecrypt(context.Application.Path, context.Buildpack, result.Plan)
 		d.Logger = b.Logger
 		result.Layers = append(result.Layers, d)
 	}
