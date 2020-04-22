@@ -3,7 +3,7 @@ module github.com/paketo-buildpacks/encrypt-at-rest
 go 1.14
 
 require (
-	github.com/buildpacks/libcnb v1.8.0
+	github.com/buildpacks/libcnb v1.9.0
 	github.com/minio/sio v0.2.0
 	github.com/onsi/gomega v1.9.0
 	github.com/paketo-buildpacks/libpak v1.27.5
@@ -11,5 +11,5 @@ require (
 	github.com/sclevine/spec v1.4.0
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.5.1
-	golang.org/x/crypto v0.0.0-20200420201142-3c4aac89819a
+	golang.org/x/crypto v0.0.0-20200422194213-44a606286825
 )
