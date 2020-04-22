@@ -15,9 +15,10 @@
 api = "0.2"
 
 [buildpack]
-id      = "paketo-buildpacks/encrypt-at-rest"
-name    = "Paketo Encrypt-at-Rest Buildpack"
-version = "{{.version}}"
+id       = "paketo-buildpacks/encrypt-at-rest"
+name     = "Paketo Encrypt-at-Rest Buildpack"
+version  = "{{.version}}"
+homepage = "https://github.com/paketo-buildpacks/encrypt-at-rest"
 
 [[stacks]]
 id = "io.buildpacks.stacks.bionic"
