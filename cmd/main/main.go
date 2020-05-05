@@ -17,14 +17,23 @@
 package main
 
 import (
+	"os"
+
 	"github.com/paketo-buildpacks/encrypt-at-rest/dare"
 	"github.com/paketo-buildpacks/libpak"
+	"github.com/paketo-buildpacks/libpak/bard"
 )
 
 func main() {
-	libpak.Detect(dare.Detect{
-		KeyProviders: []dare.KeyProvider{
-			dare.EnvironmentVariableKeyProvider{},
-		},
-	})
+	logger := bard.NewLogger(os.Stdout)
+	keyProviders := []dare.KeyProvider{
+		dare.EnvironmentVariableKeyProvider{Logger: logger},
+	}
+
+	libpak.Main(
+		dare.Detect{KeyProviders: keyProviders},
+		dare.Build{
+			Logger:       logger,
+			KeyProviders: keyProviders,
+		})
 }

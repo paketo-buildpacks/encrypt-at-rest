@@ -35,5 +35,6 @@ include-files = [
   "bin/build",
   "bin/decrypt-application",
   "bin/detect",
+  "bin/main",
   "buildpack.toml",
 ]
