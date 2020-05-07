@@ -60,7 +60,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 	it("contributes ", func() {
 		kp.On("Participate", mock.Anything).Return(true, nil)
-		kp.On("Key").Return([]byte{}, nil)
+		kp.On("Key", mock.Anything).Return([]byte{}, nil)
 
 		result, err := build.Build(ctx)
 		Expect(err).NotTo(HaveOccurred())

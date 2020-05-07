@@ -47,7 +47,7 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 			continue
 		}
 
-		key, err := k.Key()
+		key, err := k.Key(context)
 		if err != nil {
 			return libcnb.BuildResult{}, fmt.Errorf("unable to get encryption key\n%w", err)
 		}

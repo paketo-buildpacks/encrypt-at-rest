@@ -19,7 +19,6 @@ package dare
 import (
 	"encoding/hex"
 	"fmt"
-	"os"
 
 	"github.com/buildpacks/libcnb"
 	"github.com/paketo-buildpacks/libpak"
@@ -30,7 +29,7 @@ import (
 
 type KeyProvider interface {
 	Detect(context libcnb.DetectContext, result *libcnb.DetectResult) error
-	Key() ([]byte, error)
+	Key(context libcnb.BuildContext) ([]byte, error)
 	Participate(resolver libpak.PlanEntryResolver) (bool, error)
 }
 
@@ -61,8 +60,13 @@ func (EnvironmentVariableKeyProvider) Detect(context libcnb.DetectContext, resul
 	return nil
 }
 
-func (EnvironmentVariableKeyProvider) Key() ([]byte, error) {
-	s := os.Getenv("BP_EAR_KEY")
+func (e EnvironmentVariableKeyProvider) Key(context libcnb.BuildContext) ([]byte, error) {
+	cr, err := libpak.NewConfigurationResolver(context.Buildpack, &e.Logger)
+	if err != nil {
+		return nil, fmt.Errorf("unable to create configuration resolver\n%w", err)
+	}
+
+	s, _ := cr.Resolve("BP_EAR_KEY")
 	return hex.DecodeString(s)
 }
 

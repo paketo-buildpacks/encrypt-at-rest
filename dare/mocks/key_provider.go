@@ -28,13 +28,13 @@ func (_m *KeyProvider) Detect(context libcnb.DetectContext, result *libcnb.Detec
 	return r0
 }
 
-// Key provides a mock function with given fields:
-func (_m *KeyProvider) Key() ([]byte, error) {
-	ret := _m.Called()
+// Key provides a mock function with given fields: context
+func (_m *KeyProvider) Key(context libcnb.BuildContext) ([]byte, error) {
+	ret := _m.Called(context)
 
 	var r0 []byte
-	if rf, ok := ret.Get(0).(func() []byte); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(libcnb.BuildContext) []byte); ok {
+		r0 = rf(context)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]byte)
@@ -42,8 +42,8 @@ func (_m *KeyProvider) Key() ([]byte, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(libcnb.BuildContext) error); ok {
+		r1 = rf(context)
 	} else {
 		r1 = ret.Error(1)
 	}

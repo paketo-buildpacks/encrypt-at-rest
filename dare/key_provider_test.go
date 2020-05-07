@@ -51,7 +51,7 @@ func testKeyProvider(t *testing.T, context spec.G, it spec.S) {
 					b, err := hex.DecodeString("E48F0660412A993E62FB11CA086C2D353C95359AD3A3480E778FBA43DB694E60")
 					Expect(err).NotTo(HaveOccurred())
 
-					Expect(kp.Key()).To(Equal(b))
+					Expect(kp.Key(libcnb.BuildContext{})).To(Equal(b))
 				})
 			})
 
