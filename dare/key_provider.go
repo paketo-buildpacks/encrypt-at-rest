@@ -39,7 +39,12 @@ type EnvironmentVariableKeyProvider struct {
 }
 
 func (EnvironmentVariableKeyProvider) Detect(context libcnb.DetectContext, result *libcnb.DetectResult) error {
-	if _, ok := os.LookupEnv("BP_EAR_KEY"); !ok {
+	cr, err := libpak.NewConfigurationResolver(context.Buildpack, nil)
+	if err != nil {
+		return fmt.Errorf("unable to create configuration resolver\n%w", err)
+	}
+
+	if _, ok := cr.Resolve("BP_EAR_KEY"); !ok {
 		return nil
 	}
 
@@ -62,11 +67,9 @@ func (EnvironmentVariableKeyProvider) Key() ([]byte, error) {
 }
 
 func (e EnvironmentVariableKeyProvider) Participate(resolver libpak.PlanEntryResolver) (bool, error) {
-	if f, ok, err := resolver.Resolve("encrypt-at-rest"); err != nil {
+	if f, _, err := resolver.Resolve("encrypt-at-rest"); err != nil {
 		return false, fmt.Errorf("unable to resolve gradle plan entry\n%w", err)
-	} else if ok && f.Metadata["type"].(string) == "environment-variable" {
-		e.Logger.Body(bard.FormatUserConfig("BP_EAR_KEY", "the AES hex encoded encryption key", "<none>"))
-		e.Logger.Body(bard.FormatUserConfig("BPL_EAR_KEY", "the AES hex encoded encryption key", "<none>"))
+	} else if f.Metadata["type"].(string) == "environment-variable" {
 		return true, nil
 	}
 
