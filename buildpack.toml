@@ -29,10 +29,12 @@ id = "org.cloudfoundry.stacks.cflinuxfs3"
 [[metadata.configurations]]
 name        = "BPL_EAR_KEY"
 description = "the AES hex encoded encryption key"
+launch      = true
 
 [[metadata.configurations]]
 name        = "BP_EAR_KEY"
 description = "the AES hex encoded encryption key"
+build       = true
 
 [metadata]
 pre-package   = "scripts/build.sh"
