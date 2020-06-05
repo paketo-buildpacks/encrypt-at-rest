@@ -38,7 +38,7 @@ type Decrypt struct {
 func (d Decrypt) Execute() error {
 	salt, err := ioutil.ReadFile(d.SaltPath)
 	if err != nil {
-		return fmt.Errorf("uanble to read salt\n%w", err)
+		return fmt.Errorf("unable to read salt\n%w", err)
 	}
 
 	var key [32]byte
