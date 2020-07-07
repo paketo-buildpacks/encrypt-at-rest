@@ -29,9 +29,10 @@ import (
 	"github.com/buildpacks/libcnb"
 	"github.com/minio/sio"
 	. "github.com/onsi/gomega"
-	"github.com/paketo-buildpacks/encrypt-at-rest/dare"
 	"github.com/sclevine/spec"
 	"golang.org/x/crypto/hkdf"
+
+	"github.com/paketo-buildpacks/encrypt-at-rest/dare"
 )
 
 func testEncrypt(t *testing.T, context spec.G, it spec.S) {

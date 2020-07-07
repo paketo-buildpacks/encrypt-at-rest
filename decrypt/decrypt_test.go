@@ -28,10 +28,11 @@ import (
 
 	"github.com/minio/sio"
 	. "github.com/onsi/gomega"
-	"github.com/paketo-buildpacks/encrypt-at-rest/decrypt"
 	"github.com/paketo-buildpacks/libpak/crush"
 	"github.com/sclevine/spec"
 	"golang.org/x/crypto/hkdf"
+
+	"github.com/paketo-buildpacks/encrypt-at-rest/decrypt"
 )
 
 func testDecrypt(t *testing.T, context spec.G, it spec.S) {

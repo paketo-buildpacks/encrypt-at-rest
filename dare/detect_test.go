@@ -22,10 +22,11 @@ import (
 
 	"github.com/buildpacks/libcnb"
 	. "github.com/onsi/gomega"
-	"github.com/paketo-buildpacks/encrypt-at-rest/dare"
-	"github.com/paketo-buildpacks/encrypt-at-rest/dare/mocks"
 	"github.com/sclevine/spec"
 	"github.com/stretchr/testify/mock"
+
+	"github.com/paketo-buildpacks/encrypt-at-rest/dare"
+	"github.com/paketo-buildpacks/encrypt-at-rest/dare/mocks"
 )
 
 func testDetect(t *testing.T, context spec.G, it spec.S) {

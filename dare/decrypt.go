@@ -22,10 +22,11 @@ import (
 	"path/filepath"
 
 	"github.com/buildpacks/libcnb"
-	_ "github.com/paketo-buildpacks/encrypt-at-rest/dare/statik"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
 	"github.com/paketo-buildpacks/libpak/sherpa"
+
+	_ "github.com/paketo-buildpacks/encrypt-at-rest/dare/statik"
 )
 
 type Decrypt struct {

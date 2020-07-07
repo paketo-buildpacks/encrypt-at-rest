@@ -21,9 +21,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/paketo-buildpacks/encrypt-at-rest/decrypt"
 	"github.com/paketo-buildpacks/libpak/sherpa"
 	"github.com/spf13/pflag"
+
+	"github.com/paketo-buildpacks/encrypt-at-rest/decrypt"
 )
 
 func main() {

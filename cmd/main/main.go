@@ -19,9 +19,10 @@ package main
 import (
 	"os"
 
-	"github.com/paketo-buildpacks/encrypt-at-rest/dare"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
+
+	"github.com/paketo-buildpacks/encrypt-at-rest/dare"
 )
 
 func main() {
