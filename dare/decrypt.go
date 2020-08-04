@@ -73,5 +73,5 @@ func (d Decrypt) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 }
 
 func (d Decrypt) Name() string {
-	return "decrypt"
+	return d.LayerContributor.LayerName()
 }
