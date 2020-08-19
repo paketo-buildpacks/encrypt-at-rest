@@ -20,6 +20,7 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -41,6 +42,7 @@ func testDecrypt(t *testing.T, context spec.G, it spec.S) {
 
 		decryptedPath string
 		encryptedPath string
+		key           string
 		saltPath      string
 	)
 
@@ -55,6 +57,8 @@ func testDecrypt(t *testing.T, context spec.G, it spec.S) {
 		Expect(f.Close()).To(Succeed())
 		encryptedPath = f.Name()
 
+		key = "E48F0660412A993E62FB11CA086C2D353C95359AD3A3480E778FBA43DB694E60"
+
 		f, err = ioutil.TempFile("", "decrypt-salt")
 		Expect(err).NotTo(HaveOccurred())
 		Expect(f.Close()).To(Succeed())
@@ -67,41 +71,104 @@ func testDecrypt(t *testing.T, context spec.G, it spec.S) {
 		Expect(os.RemoveAll(saltPath)).To(Succeed())
 	})
 
-	it("decrypts application", func() {
-		master, err := hex.DecodeString("E48F0660412A993E62FB11CA086C2D353C95359AD3A3480E778FBA43DB694E60")
-		Expect(err).NotTo(HaveOccurred())
+	it("does nothing if $BPL_EAR_KEY is not set", func() {
+		Expect(decrypt.Decrypt{}.Execute()).To(BeNil())
+	})
 
-		var salt [32]byte
-		_, err = io.ReadFull(rand.Reader, salt[:])
-		Expect(err).NotTo(HaveOccurred())
-		Expect(ioutil.WriteFile(saltPath, salt[:], 0644)).To(Succeed())
+	context("$BPL_EAR_KEY", func() {
 
-		var key [32]byte
-		kdf := hkdf.New(sha256.New, master, salt[:], nil)
-		_, err = io.ReadFull(kdf, key[:])
-		Expect(err).NotTo(HaveOccurred())
+		it.Before(func() {
+			Expect(os.Setenv("BPL_EAR_KEY", key))
+		})
 
-		out, err := os.OpenFile(encryptedPath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
-		Expect(err).NotTo(HaveOccurred())
+		it.After(func() {
+			Expect(os.Unsetenv("BPL_EAR_KEY")).To(Succeed())
+		})
 
-		w, err := sio.EncryptWriter(out, sio.Config{Key: key[:]})
-		Expect(err).NotTo(HaveOccurred())
+		it("return error if $BPI_EAR_SALT_PATH is not set", func() {
+			_, err := decrypt.Decrypt{}.Execute()
+			Expect(err).To(MatchError("$BPI_EAR_SALT_PATH must be set"))
+		})
 
-		file := filepath.Join(decryptedPath, "fixture-marker")
-		Expect(ioutil.WriteFile(file, []byte{}, 0644)).To(Succeed())
-		Expect(crush.CreateTar(w, decryptedPath)).To(Succeed())
-		Expect(os.RemoveAll(file)).To(Succeed())
+		context("$BPI_EAR_SALT_PATH", func() {
 
-		Expect(w.Close()).To(Succeed())
+			it.Before(func() {
+				Expect(os.Setenv("BPI_EAR_SALT_PATH", saltPath)).To(Succeed())
+			})
 
-		d := decrypt.Decrypt{
-			DecryptedApplicationPath: decryptedPath,
-			EncryptedApplicationPath: encryptedPath,
-			Key:                      master,
-			SaltPath:                 saltPath,
-		}
+			it.After(func() {
+				Expect(os.Unsetenv("BPI_EAR_SALT_PATH")).To(Succeed())
+			})
 
-		Expect(d.Execute()).To(Succeed())
-		Expect(filepath.Join(decryptedPath, "fixture-marker")).To(BeARegularFile())
+			it("return error if $BPI_EAR_ENCRYPTED_APPLICATION is not set", func() {
+				_, err := decrypt.Decrypt{}.Execute()
+				Expect(err).To(MatchError("$BPI_EAR_ENCRYPTED_APPLICATION must be set"))
+			})
+
+			context("$BPI_EAR_ENCRYPTED_APPLICATION", func() {
+
+				it.Before(func() {
+					Expect(os.Setenv("BPI_EAR_ENCRYPTED_APPLICATION", encryptedPath)).To(Succeed())
+				})
+
+				it.After(func() {
+					Expect(os.Unsetenv("BPI_EAR_ENCRYPTED_APPLICATION")).To(Succeed())
+				})
+
+				it("return error if $BPI_EAR_DECRYPTED_APPLICATION is not set", func() {
+					_, err := decrypt.Decrypt{}.Execute()
+					Expect(err).To(MatchError("$BPI_EAR_DECRYPTED_APPLICATION must be set"))
+				})
+
+				context("$BPI_EAR_DECRYPTED_APPLICATION", func() {
+
+					it.Before(func() {
+						Expect(os.Setenv("BPI_EAR_DECRYPTED_APPLICATION", decryptedPath)).To(Succeed())
+					})
+
+					it.After(func() {
+						Expect(os.Unsetenv("BPI_EAR_DECRYPTED_APPLICATION")).To(Succeed())
+					})
+
+					it("returns error if decrypted application path is not writable", func() {
+						Expect(os.Chmod(decryptedPath, 0555)).To(Succeed())
+
+						_, err := decrypt.Decrypt{}.Execute()
+						Expect(err).To(MatchError(fmt.Sprintf("unable to write to %s", decryptedPath)))
+					})
+
+					it("decrypts application", func() {
+						primary, err := hex.DecodeString(key)
+						Expect(err).NotTo(HaveOccurred())
+
+						var salt [32]byte
+						_, err = io.ReadFull(rand.Reader, salt[:])
+						Expect(err).NotTo(HaveOccurred())
+						Expect(ioutil.WriteFile(saltPath, salt[:], 0644)).To(Succeed())
+
+						var key [32]byte
+						kdf := hkdf.New(sha256.New, primary, salt[:], nil)
+						_, err = io.ReadFull(kdf, key[:])
+						Expect(err).NotTo(HaveOccurred())
+
+						out, err := os.OpenFile(encryptedPath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+						Expect(err).NotTo(HaveOccurred())
+
+						w, err := sio.EncryptWriter(out, sio.Config{Key: key[:]})
+						Expect(err).NotTo(HaveOccurred())
+
+						file := filepath.Join(decryptedPath, "fixture-marker")
+						Expect(ioutil.WriteFile(file, []byte{}, 0644)).To(Succeed())
+						Expect(crush.CreateTar(w, decryptedPath)).To(Succeed())
+						Expect(os.RemoveAll(file)).To(Succeed())
+
+						Expect(w.Close()).To(Succeed())
+
+						Expect(decrypt.Decrypt{}.Execute()).To(BeNil())
+						Expect(filepath.Join(decryptedPath, "fixture-marker")).To(BeARegularFile())
+					})
+				})
+			})
+		})
 	})
 }

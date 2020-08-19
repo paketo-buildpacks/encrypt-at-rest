@@ -69,6 +69,7 @@ func (e Encrypt) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 		if err := ioutil.WriteFile(file, salt[:], 0644); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to write %s\n%w", file, err)
 		}
+		layer.LaunchEnvironment.Default("BPI_EAR_SALT_PATH", file)
 
 		var key [32]byte
 		kdf := hkdf.New(sha256.New, e.Key, salt[:], nil)
@@ -96,6 +97,9 @@ func (e Encrypt) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 		if err = w.Close(); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to finalize encryption\n%w", err)
 		}
+
+		layer.LaunchEnvironment.Default("BPI_EAR_ENCRYPTED_APPLICATION", file)
+		layer.LaunchEnvironment.Default("BPI_EAR_DECRYPTED_APPLICATION", e.ApplicationPath)
 
 		layer.Launch = true
 		return layer, nil

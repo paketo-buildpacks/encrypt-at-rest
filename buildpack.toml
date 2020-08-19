@@ -43,8 +43,8 @@ include-files = [
   "NOTICE",
   "README.md",
   "bin/build",
-  "bin/decrypt-application",
   "bin/detect",
+  "bin/helper",
   "bin/main",
   "buildpack.toml",
 ]

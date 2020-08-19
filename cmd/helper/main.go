@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package dare_test
+package main
 
 import (
-	"testing"
+	"os"
 
-	"github.com/sclevine/spec"
-	"github.com/sclevine/spec/report"
+	"github.com/paketo-buildpacks/libpak/bard"
+	"github.com/paketo-buildpacks/libpak/sherpa"
+
+	"github.com/paketo-buildpacks/encrypt-at-rest/decrypt"
 )
 
-func TestUnit(t *testing.T) {
-	suite := spec.New("dare", spec.Report(report.Terminal{}))
-	suite("Build", testBuild)
-	suite("Detect", testDetect)
-	suite("Encrypt", testEncrypt)
-	suite("KeyProvider", testKeyProvider)
-	suite.Run(t)
+func main() {
+	sherpa.Execute(func() error {
+		return sherpa.Helpers(map[string]sherpa.ExecD{
+			"decrypt-application": decrypt.Decrypt{Logger: bard.NewLogger(os.Stdout)},
+		})
+	})
 }
