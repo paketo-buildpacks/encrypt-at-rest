@@ -18,49 +18,78 @@ package decrypt
 
 import (
 	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
 
+	"github.com/heroku/color"
 	"github.com/minio/sio"
+	"github.com/paketo-buildpacks/libpak/bard"
 	"github.com/paketo-buildpacks/libpak/crush"
 	"golang.org/x/crypto/hkdf"
+	"golang.org/x/sys/unix"
 )
 
 type Decrypt struct {
-	DecryptedApplicationPath string
-	EncryptedApplicationPath string
-	Key                      []byte
-	SaltPath                 string
+	Logger bard.Logger
 }
 
-func (d Decrypt) Execute() error {
-	salt, err := ioutil.ReadFile(d.SaltPath)
-	if err != nil {
-		return fmt.Errorf("unable to read salt\n%w", err)
+func (d Decrypt) Execute() (map[string]string, error) {
+	s, ok := os.LookupEnv("BPL_EAR_KEY")
+	if !ok {
+		return nil, nil
 	}
 
-	var key [32]byte
-	kdf := hkdf.New(sha256.New, d.Key, salt[:], nil)
-	if _, err := io.ReadFull(kdf, key[:]); err != nil {
-		return fmt.Errorf("unable to derive encryption key\n%w", err)
+	primary, err := hex.DecodeString(s)
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode key\n%w", err)
 	}
 
-	in, err := os.Open(d.EncryptedApplicationPath)
+	file, ok := os.LookupEnv("BPI_EAR_SALT_PATH")
+	if !ok {
+		return nil, fmt.Errorf("$BPI_EAR_SALT_PATH must be set")
+	}
+	salt, err := ioutil.ReadFile(file)
 	if err != nil {
-		return fmt.Errorf("unable to open %s\n%w", d.EncryptedApplicationPath, err)
+		return nil, fmt.Errorf("unable to open %s\n%w", file, err)
+	}
+
+	file, ok = os.LookupEnv("BPI_EAR_ENCRYPTED_APPLICATION")
+	if !ok {
+		return nil, fmt.Errorf("$BPI_EAR_ENCRYPTED_APPLICATION must be set")
+	}
+	in, err := os.Open(file)
+	if err != nil {
+		return nil, fmt.Errorf("unable to open %s\n%w", file, err)
 	}
 	defer in.Close()
 
+	file, ok = os.LookupEnv("BPI_EAR_DECRYPTED_APPLICATION")
+	if !ok {
+		return nil, fmt.Errorf("$BPI_EAR_DECRYPTED_APPLICATION must be set")
+	}
+	if unix.Access(file, unix.W_OK) != nil {
+		d.Logger.Info(color.New(color.FgRed, color.Bold).Sprintf("Unable to decrypt application because %s is not writable", file))
+		return nil, fmt.Errorf("unable to write to %s", file)
+	}
+	out := file
+
+	var key [32]byte
+	kdf := hkdf.New(sha256.New, primary, salt[:], nil)
+	if _, err := io.ReadFull(kdf, key[:]); err != nil {
+		return nil, fmt.Errorf("unable to derive encryption key\n%w", err)
+	}
+
 	r, err := sio.DecryptReader(in, sio.Config{Key: key[:]})
 	if err != nil {
-		return fmt.Errorf("unable to create encrypted reader\n%w", err)
+		return nil, fmt.Errorf("unable to create encrypted reader\n%w", err)
 	}
 
-	if err := crush.ExtractTar(r, d.DecryptedApplicationPath, 0); err != nil {
-		return fmt.Errorf("unable to extract TAR %s to %s\n%w", d.EncryptedApplicationPath, d.DecryptedApplicationPath, err)
+	if err := crush.ExtractTar(r, out, 0); err != nil {
+		return nil, fmt.Errorf("unable to extract TAR %s to %s\n%w", in.Name(), out, err)
 	}
 
-	return nil
+	return nil, nil
 }

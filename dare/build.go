@@ -59,9 +59,9 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		e.Logger = b.Logger
 		result.Layers = append(result.Layers, e)
 
-		d := NewDecrypt(context.Application.Path, context.Buildpack, result.Plan)
-		d.Logger = b.Logger
-		result.Layers = append(result.Layers, d)
+		h := libpak.NewHelperLayerContributor(context.Buildpack, result.Plan, "decrypt-application")
+		h.Logger = b.Logger
+		result.Layers = append(result.Layers, h)
 	}
 
 	return result, nil

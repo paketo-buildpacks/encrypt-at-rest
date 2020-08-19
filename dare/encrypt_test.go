@@ -74,7 +74,12 @@ func testEncrypt(t *testing.T, context spec.G, it spec.S) {
 
 		Expect(layer.Launch).To(BeTrue())
 		Expect(filepath.Join(layer.Path, "application.tar.dare")).To(BeARegularFile())
+		Expect(layer.LaunchEnvironment["BPI_EAR_ENCRYPTED_APPLICATION.default"]).To(Equal(filepath.Join(layer.Path, "application.tar.dare")))
+
 		Expect(filepath.Join(layer.Path, "salt")).To(BeARegularFile())
+		Expect(layer.LaunchEnvironment["BPI_EAR_SALT_PATH.default"]).To(Equal(filepath.Join(layer.Path, "salt")))
+
+		Expect(layer.LaunchEnvironment["BPI_EAR_DECRYPTED_APPLICATION.default"]).To(Equal(ctx.Application.Path))
 
 		salt, err := ioutil.ReadFile(filepath.Join(layer.Path, "salt"))
 		Expect(err).NotTo(HaveOccurred())
