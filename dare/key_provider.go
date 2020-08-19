@@ -22,7 +22,6 @@ import (
 
 	"github.com/buildpacks/libcnb"
 	"github.com/paketo-buildpacks/libpak"
-	"github.com/paketo-buildpacks/libpak/bard"
 )
 
 //go:generate mockery -name KeyProvider -case=underscore
@@ -33,9 +32,7 @@ type KeyProvider interface {
 	Participate(resolver libpak.PlanEntryResolver) (bool, error)
 }
 
-type EnvironmentVariableKeyProvider struct {
-	Logger bard.Logger
-}
+type EnvironmentVariableKeyProvider struct {}
 
 func (EnvironmentVariableKeyProvider) Detect(context libcnb.DetectContext, result *libcnb.DetectResult) error {
 	cr, err := libpak.NewConfigurationResolver(context.Buildpack, nil)
@@ -61,7 +58,7 @@ func (EnvironmentVariableKeyProvider) Detect(context libcnb.DetectContext, resul
 }
 
 func (e EnvironmentVariableKeyProvider) Key(context libcnb.BuildContext) ([]byte, error) {
-	cr, err := libpak.NewConfigurationResolver(context.Buildpack, &e.Logger)
+	cr, err := libpak.NewConfigurationResolver(context.Buildpack, nil)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create configuration resolver\n%w", err)
 	}

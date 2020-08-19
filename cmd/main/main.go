@@ -26,15 +26,14 @@ import (
 )
 
 func main() {
-	logger := bard.NewLogger(os.Stdout)
 	keyProviders := []dare.KeyProvider{
-		dare.EnvironmentVariableKeyProvider{Logger: logger},
+		dare.EnvironmentVariableKeyProvider{},
 	}
 
 	libpak.Main(
 		dare.Detect{KeyProviders: keyProviders},
 		dare.Build{
-			Logger:       logger,
+			Logger:       bard.NewLogger(os.Stdout),
 			KeyProviders: keyProviders,
 		})
 }
