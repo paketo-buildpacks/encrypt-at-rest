@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package decrypt
+package helper
 
 import (
 	"crypto/sha256"

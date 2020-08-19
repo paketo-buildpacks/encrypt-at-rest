@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package decrypt_test
+package helper_test
 
 import (
 	"crypto/rand"
@@ -33,7 +33,7 @@ import (
 	"github.com/sclevine/spec"
 	"golang.org/x/crypto/hkdf"
 
-	"github.com/paketo-buildpacks/encrypt-at-rest/decrypt"
+	"github.com/paketo-buildpacks/encrypt-at-rest/helper"
 )
 
 func testDecrypt(t *testing.T, context spec.G, it spec.S) {
@@ -72,7 +72,7 @@ func testDecrypt(t *testing.T, context spec.G, it spec.S) {
 	})
 
 	it("does nothing if $BPL_EAR_KEY is not set", func() {
-		Expect(decrypt.Decrypt{}.Execute()).To(BeNil())
+		Expect(helper.Decrypt{}.Execute()).To(BeNil())
 	})
 
 	context("$BPL_EAR_KEY", func() {
@@ -86,7 +86,7 @@ func testDecrypt(t *testing.T, context spec.G, it spec.S) {
 		})
 
 		it("return error if $BPI_EAR_SALT_PATH is not set", func() {
-			_, err := decrypt.Decrypt{}.Execute()
+			_, err := helper.Decrypt{}.Execute()
 			Expect(err).To(MatchError("$BPI_EAR_SALT_PATH must be set"))
 		})
 
@@ -101,7 +101,7 @@ func testDecrypt(t *testing.T, context spec.G, it spec.S) {
 			})
 
 			it("return error if $BPI_EAR_ENCRYPTED_APPLICATION is not set", func() {
-				_, err := decrypt.Decrypt{}.Execute()
+				_, err := helper.Decrypt{}.Execute()
 				Expect(err).To(MatchError("$BPI_EAR_ENCRYPTED_APPLICATION must be set"))
 			})
 
@@ -116,7 +116,7 @@ func testDecrypt(t *testing.T, context spec.G, it spec.S) {
 				})
 
 				it("return error if $BPI_EAR_DECRYPTED_APPLICATION is not set", func() {
-					_, err := decrypt.Decrypt{}.Execute()
+					_, err := helper.Decrypt{}.Execute()
 					Expect(err).To(MatchError("$BPI_EAR_DECRYPTED_APPLICATION must be set"))
 				})
 
@@ -133,7 +133,7 @@ func testDecrypt(t *testing.T, context spec.G, it spec.S) {
 					it("returns error if decrypted application path is not writable", func() {
 						Expect(os.Chmod(decryptedPath, 0555)).To(Succeed())
 
-						_, err := decrypt.Decrypt{}.Execute()
+						_, err := helper.Decrypt{}.Execute()
 						Expect(err).To(MatchError(fmt.Sprintf("unable to write to %s", decryptedPath)))
 					})
 
@@ -164,7 +164,7 @@ func testDecrypt(t *testing.T, context spec.G, it spec.S) {
 
 						Expect(w.Close()).To(Succeed())
 
-						Expect(decrypt.Decrypt{}.Execute()).To(BeNil())
+						Expect(helper.Decrypt{}.Execute()).To(BeNil())
 						Expect(filepath.Join(decryptedPath, "fixture-marker")).To(BeARegularFile())
 					})
 				})

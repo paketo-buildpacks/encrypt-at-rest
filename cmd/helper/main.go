@@ -22,13 +22,13 @@ import (
 	"github.com/paketo-buildpacks/libpak/bard"
 	"github.com/paketo-buildpacks/libpak/sherpa"
 
-	"github.com/paketo-buildpacks/encrypt-at-rest/decrypt"
+	"github.com/paketo-buildpacks/encrypt-at-rest/helper"
 )
 
 func main() {
 	sherpa.Execute(func() error {
 		return sherpa.Helpers(map[string]sherpa.ExecD{
-			"decrypt-application": decrypt.Decrypt{Logger: bard.NewLogger(os.Stdout)},
+			"decrypt-application": helper.Decrypt{Logger: bard.NewLogger(os.Stdout)},
 		})
 	})
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package decrypt_test
+package helper_test
 
 import (
 	"testing"
