@@ -24,7 +24,6 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/heroku/color"
 	"github.com/minio/sio"
 	"github.com/paketo-buildpacks/libpak/bard"
 	"github.com/paketo-buildpacks/libpak/crush"
@@ -71,7 +70,7 @@ func (d Decrypt) Execute() (map[string]string, error) {
 		return nil, fmt.Errorf("$BPI_EAR_DECRYPTED_APPLICATION must be set")
 	}
 	if unix.Access(file, unix.W_OK) != nil {
-		d.Logger.Info(color.New(color.FgRed, color.Bold).Sprintf("Unable to decrypt application because %s is not writable", file))
+		d.Logger.Info("ERROR: Unable to decrypt application because %s is not writable", file)
 		return nil, fmt.Errorf("unable to write to %s", file)
 	}
 	out := file

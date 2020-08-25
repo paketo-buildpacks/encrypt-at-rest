@@ -34,6 +34,7 @@ import (
 	"golang.org/x/crypto/hkdf"
 
 	"github.com/paketo-buildpacks/encrypt-at-rest/helper"
+	"github.com/paketo-buildpacks/encrypt-at-rest/internal"
 )
 
 func testDecrypt(t *testing.T, context spec.G, it spec.S) {
@@ -130,13 +131,6 @@ func testDecrypt(t *testing.T, context spec.G, it spec.S) {
 						Expect(os.Unsetenv("BPI_EAR_DECRYPTED_APPLICATION")).To(Succeed())
 					})
 
-					it("returns error if decrypted application path is not writable", func() {
-						Expect(os.Chmod(decryptedPath, 0555)).To(Succeed())
-
-						_, err := helper.Decrypt{}.Execute()
-						Expect(err).To(MatchError(fmt.Sprintf("unable to write to %s", decryptedPath)))
-					})
-
 					it("decrypts application", func() {
 						primary, err := hex.DecodeString(key)
 						Expect(err).NotTo(HaveOccurred())
@@ -166,6 +160,17 @@ func testDecrypt(t *testing.T, context spec.G, it spec.S) {
 
 						Expect(helper.Decrypt{}.Execute()).To(BeNil())
 						Expect(filepath.Join(decryptedPath, "fixture-marker")).To(BeARegularFile())
+					})
+
+					if internal.IsRoot() {
+						return
+					}
+
+					it("returns error if decrypted application path is not writable", func() {
+						Expect(os.Chmod(decryptedPath, 0555)).To(Succeed())
+
+						_, err := helper.Decrypt{}.Execute()
+						Expect(err).To(MatchError(fmt.Sprintf("unable to write to %s", decryptedPath)))
 					})
 				})
 			})

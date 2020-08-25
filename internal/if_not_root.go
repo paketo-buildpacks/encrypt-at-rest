@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package helper_test
+package internal
 
 import (
-	"testing"
-
-	"github.com/sclevine/spec"
-	"github.com/sclevine/spec/report"
+	"os/user"
 )
 
-func TestUnit(t *testing.T) {
-	suite := spec.New("helper", spec.Report(report.Terminal{}))
-	suite("Decrypt", testDecrypt)
-	suite.Run(t)
+func IsRoot() bool {
+	u, _ := user.Current()
+	return u.Username == "root"
 }
