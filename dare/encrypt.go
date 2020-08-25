@@ -101,9 +101,8 @@ func (e Encrypt) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 		layer.LaunchEnvironment.Default("BPI_EAR_ENCRYPTED_APPLICATION", file)
 		layer.LaunchEnvironment.Default("BPI_EAR_DECRYPTED_APPLICATION", e.ApplicationPath)
 
-		layer.Launch = true
 		return layer, nil
-	})
+	}, libpak.LaunchLayer)
 	if err != nil {
 		return libcnb.Layer{}, fmt.Errorf("unable to contribute layer\n%w", err)
 	}
