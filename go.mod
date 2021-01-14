@@ -8,7 +8,7 @@ require (
 	github.com/onsi/gomega v1.10.4
 	github.com/paketo-buildpacks/libpak v1.50.0
 	github.com/sclevine/spec v1.4.0
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
 	golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f
 )
