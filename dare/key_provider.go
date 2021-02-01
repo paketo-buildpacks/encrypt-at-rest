@@ -32,7 +32,7 @@ type KeyProvider interface {
 	Participate(resolver libpak.PlanEntryResolver) (bool, error)
 }
 
-type EnvironmentVariableKeyProvider struct {}
+type EnvironmentVariableKeyProvider struct{}
 
 func (EnvironmentVariableKeyProvider) Detect(context libcnb.DetectContext, result *libcnb.DetectResult) error {
 	cr, err := libpak.NewConfigurationResolver(context.Buildpack, nil)
