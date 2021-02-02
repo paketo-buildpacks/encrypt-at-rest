@@ -49,9 +49,11 @@ func NewEncrypt(applicationPath string, key []byte) (Encrypt, error) {
 	expected := map[string][]sherpa.FileEntry{"files": l}
 
 	return Encrypt{
-		ApplicationPath:  applicationPath,
-		Key:              key,
-		LayerContributor: libpak.NewLayerContributor("Encrypt Application", expected),
+		ApplicationPath: applicationPath,
+		Key:             key,
+		LayerContributor: libpak.NewLayerContributor("Encrypt Application", expected, libcnb.LayerTypes{
+			Launch: true,
+		}),
 	}, nil
 }
 
@@ -102,7 +104,7 @@ func (e Encrypt) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 		layer.LaunchEnvironment.Default("BPI_EAR_DECRYPTED_APPLICATION", e.ApplicationPath)
 
 		return layer, nil
-	}, libpak.LaunchLayer)
+	})
 	if err != nil {
 		return libcnb.Layer{}, fmt.Errorf("unable to contribute layer\n%w", err)
 	}
