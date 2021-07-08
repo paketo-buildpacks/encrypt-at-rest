@@ -3,7 +3,7 @@ module github.com/paketo-buildpacks/encrypt-at-rest
 go 1.15
 
 require (
-	github.com/buildpacks/libcnb v1.21.0
+	github.com/buildpacks/libcnb v1.22.0
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/minio/sio v0.3.0
 	github.com/onsi/gomega v1.14.0
