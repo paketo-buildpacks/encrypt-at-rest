@@ -30,7 +30,10 @@ uri  = "https://github.com/paketo-buildpacks/encrypt-at-rest/blob/main/LICENSE"
 id = "io.buildpacks.stacks.bionic"
 
 [[stacks]]
-id = "org.cloudfoundry.stacks.cflinuxfs3"
+id = "io.paketo.stacks.tiny"
+
+[[stacks]]
+id = "*"
 
 [[metadata.configurations]]
 name        = "BPL_EAR_KEY"
