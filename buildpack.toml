@@ -15,45 +15,36 @@
 api = "0.6"
 
 [buildpack]
-id       = "paketo-buildpacks/encrypt-at-rest"
-name     = "Paketo Encrypt-at-Rest Buildpack"
-version  = "{{.version}}"
-homepage = "https://github.com/paketo-buildpacks/encrypt-at-rest"
-description = "A Cloud Native Buildpack that AES encrypts an application layer and then decrypts it at launch time"
-keywords    = ["AES", "encrypt-at-rest"]
+  description = "A Cloud Native Buildpack that AES encrypts an application layer and then decrypts it at launch time"
+  homepage = "https://github.com/paketo-buildpacks/encrypt-at-rest"
+  id = "paketo-buildpacks/encrypt-at-rest"
+  keywords = ["AES", "encrypt-at-rest"]
+  name = "Paketo Encrypt-at-Rest Buildpack"
+  version = "{{.version}}"
 
-[[buildpack.licenses]]
-type = "Apache-2.0"
-uri  = "https://github.com/paketo-buildpacks/encrypt-at-rest/blob/main/LICENSE"
-
-[[stacks]]
-id = "io.buildpacks.stacks.bionic"
-
-[[stacks]]
-id = "io.paketo.stacks.tiny"
-
-[[stacks]]
-id = "*"
-
-[[metadata.configurations]]
-name        = "BPL_EAR_KEY"
-description = "the AES hex encoded encryption key"
-launch      = true
-
-[[metadata.configurations]]
-name        = "BP_EAR_KEY"
-description = "the AES hex encoded encryption key"
-build       = true
+  [[buildpack.licenses]]
+    type = "Apache-2.0"
+    uri = "https://github.com/paketo-buildpacks/encrypt-at-rest/blob/main/LICENSE"
 
 [metadata]
-pre-package   = "scripts/build.sh"
-include-files = [
-  "LICENSE",
-  "NOTICE",
-  "README.md",
-  "bin/build",
-  "bin/detect",
-  "bin/helper",
-  "bin/main",
-  "buildpack.toml",
-]
+  include-files = ["LICENSE", "NOTICE", "README.md", "bin/build", "bin/detect", "bin/helper", "bin/main", "buildpack.toml"]
+  pre-package = "scripts/build.sh"
+
+  [[metadata.configurations]]
+    description = "the AES hex encoded encryption key"
+    launch = true
+    name = "BPL_EAR_KEY"
+
+  [[metadata.configurations]]
+    build = true
+    description = "the AES hex encoded encryption key"
+    name = "BP_EAR_KEY"
+
+[[stacks]]
+  id = "io.buildpacks.stacks.bionic"
+
+[[stacks]]
+  id = "io.paketo.stacks.tiny"
+
+[[stacks]]
+  id = "*"
