@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-api = "0.6"
+api = "0.7"
 
 [buildpack]
   description = "A Cloud Native Buildpack that AES encrypts an application layer and then decrypts it at launch time"
@@ -21,6 +21,8 @@ api = "0.6"
   keywords = ["AES", "encrypt-at-rest"]
   name = "Paketo Encrypt-at-Rest Buildpack"
   version = "{{.version}}"
+  sbom-formats = ["application/vnd.cyclonedx+json", "application/vnd.syft+json"]
+
 
   [[buildpack.licenses]]
     type = "Apache-2.0"
