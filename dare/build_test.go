@@ -60,7 +60,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(build.Build(ctx)).To(Equal(libcnb.NewBuildResult()))
 	})
 
-	it("contributes", func() {
+	it("contributes for API <= 0.6", func() {
 		kp.On("Participate", mock.Anything).Return(true, nil)
 		kp.On("Key", mock.Anything).Return([]byte{}, nil)
 		ctx.Buildpack.API = "0.6"
@@ -75,5 +75,20 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 		Expect(result.BOM.Entries).To(HaveLen(1))
 		Expect(result.BOM.Entries[0].Name).To(Equal("helper"))
+	})
+	it("contributes for API 0.7+", func() {
+		kp.On("Participate", mock.Anything).Return(true, nil)
+		kp.On("Key", mock.Anything).Return([]byte{}, nil)
+		ctx.Buildpack.API = "0.7"
+
+		result, err := build.Build(ctx)
+		Expect(err).NotTo(HaveOccurred())
+
+		Expect(result.Layers).To(HaveLen(2))
+		Expect(result.Layers[0].Name()).To(Equal("encrypt"))
+		Expect(result.Layers[1].Name()).To(Equal("helper"))
+		Expect(result.Layers[1].(libpak.HelperLayerContributor).Names).To(Equal([]string{"decrypt-application"}))
+
+		Expect(result.BOM.Entries).To(HaveLen(0))
 	})
 }
