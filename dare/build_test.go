@@ -89,6 +89,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 		Expect(result.Layers[1].Name()).To(Equal("helper"))
 		Expect(result.Layers[1].(libpak.HelperLayerContributor).Names).To(Equal([]string{"decrypt-application"}))
 
-		Expect(result.BOM.Entries).To(HaveLen(0))
+		Expect(result.BOM.Entries).To(HaveLen(1))
 	})
 }
