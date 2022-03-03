@@ -32,7 +32,7 @@ import (
 	"github.com/sclevine/spec"
 	"golang.org/x/crypto/hkdf"
 
-	"github.com/paketo-buildpacks/encrypt-at-rest/dare"
+	"github.com/paketo-buildpacks/encrypt-at-rest/v4/dare"
 )
 
 func testEncrypt(t *testing.T, context spec.G, it spec.S) {

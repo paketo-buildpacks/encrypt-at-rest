@@ -25,8 +25,8 @@ import (
 	"github.com/sclevine/spec"
 	"github.com/stretchr/testify/mock"
 
-	"github.com/paketo-buildpacks/encrypt-at-rest/dare"
-	"github.com/paketo-buildpacks/encrypt-at-rest/dare/mocks"
+	"github.com/paketo-buildpacks/encrypt-at-rest/v4/dare"
+	"github.com/paketo-buildpacks/encrypt-at-rest/v4/dare/mocks"
 )
 
 func testDetect(t *testing.T, context spec.G, it spec.S) {
