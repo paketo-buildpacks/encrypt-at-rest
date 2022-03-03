@@ -22,7 +22,7 @@ import (
 	"github.com/paketo-buildpacks/libpak/bard"
 	"github.com/paketo-buildpacks/libpak/sherpa"
 
-	"github.com/paketo-buildpacks/encrypt-at-rest/helper"
+	"github.com/paketo-buildpacks/encrypt-at-rest/v4/helper"
 )
 
 func main() {

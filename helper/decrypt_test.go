@@ -33,8 +33,8 @@ import (
 	"github.com/sclevine/spec"
 	"golang.org/x/crypto/hkdf"
 
-	"github.com/paketo-buildpacks/encrypt-at-rest/helper"
-	"github.com/paketo-buildpacks/encrypt-at-rest/internal"
+	"github.com/paketo-buildpacks/encrypt-at-rest/v4/helper"
+	"github.com/paketo-buildpacks/encrypt-at-rest/v4/internal"
 )
 
 func testDecrypt(t *testing.T, context spec.G, it spec.S) {
