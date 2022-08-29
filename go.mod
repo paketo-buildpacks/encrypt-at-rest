@@ -5,12 +5,12 @@ go 1.18
 require (
 	github.com/buildpacks/libcnb v1.26.0
 	github.com/minio/sio v0.3.0
-	github.com/onsi/gomega v1.20.0
+	github.com/onsi/gomega v1.20.1
 	github.com/paketo-buildpacks/libpak v1.61.0
 	github.com/sclevine/spec v1.4.0
 	github.com/stretchr/testify v1.8.0
-	golang.org/x/crypto v0.0.0-20220817201139-bc19a97f63c8
-	golang.org/x/sys v0.0.0-20220818161305-2296e01440c6
+	golang.org/x/crypto v0.0.0-20220826181053-bd7e27e6170d
+	golang.org/x/sys v0.0.0-20220825204002-c680a09ffe64
 )
 
 require (
@@ -29,7 +29,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.4.0 // indirect
 	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
-	golang.org/x/net v0.0.0-20220812174116-3211cb980234 // indirect
+	golang.org/x/net v0.0.0-20220826154423-83b083e8dc8b // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
