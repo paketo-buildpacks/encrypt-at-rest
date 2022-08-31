@@ -1,5 +1,5 @@
 # `gcr.io/paketo-buildpacks/encrypt-at-rest`
-The Paketo Encrypt At Rest Buildpack is a Cloud Native Buildpack that AES encrypts an application layer and then decrypts it at launch time.
+The Paketo Buildpack for Encrypt At Rest is a Cloud Native Buildpack that AES encrypts an application layer and then decrypts it at launch time.
 
 ## Behavior
 This buildpack will participate any of the following conditions are met

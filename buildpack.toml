@@ -19,7 +19,7 @@ api = "0.7"
   homepage = "https://github.com/paketo-buildpacks/encrypt-at-rest"
   id = "paketo-buildpacks/encrypt-at-rest"
   keywords = ["AES", "encrypt-at-rest"]
-  name = "Paketo Encrypt-at-Rest Buildpack"
+  name = "Paketo Buildpack for Encrypt-at-Rest"
   version = "{{.version}}"
   sbom-formats = ["application/vnd.cyclonedx+json", "application/vnd.syft+json"]
 
