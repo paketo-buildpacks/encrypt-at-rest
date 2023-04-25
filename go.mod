@@ -6,7 +6,7 @@ require (
 	github.com/buildpacks/libcnb v1.28.0
 	github.com/minio/sio v0.3.1
 	github.com/onsi/gomega v1.27.6
-	github.com/paketo-buildpacks/libpak v1.64.0
+	github.com/paketo-buildpacks/libpak v1.65.0
 	github.com/sclevine/spec v1.4.0
 	github.com/stretchr/testify v1.8.2
 	golang.org/x/crypto v0.8.0
