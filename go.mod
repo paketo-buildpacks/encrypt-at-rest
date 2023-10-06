@@ -9,8 +9,8 @@ require (
 	github.com/paketo-buildpacks/libpak v1.67.1
 	github.com/sclevine/spec v1.4.0
 	github.com/stretchr/testify v1.8.4
-	golang.org/x/crypto v0.13.0
-	golang.org/x/sys v0.12.0
+	golang.org/x/crypto v0.14.0
+	golang.org/x/sys v0.13.0
 )
 
 require (
