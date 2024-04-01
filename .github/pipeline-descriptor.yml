@@ -6,6 +6,9 @@ codeowners:
 - path:  "*"
   owner: "@paketo-buildpacks/java-maintainers"
 
+helpers:
+  "bin/helper": "$GOMOD/cmd/helper"
+
 package:
   repositories:   ["docker.io/paketobuildpacks/encrypt-at-rest","gcr.io/paketo-buildpacks/encrypt-at-rest"]
   register:       true
