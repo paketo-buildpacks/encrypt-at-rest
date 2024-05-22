@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 the original author or authors.
+ * Copyright 2018-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 
 	"github.com/minio/sio"
@@ -50,7 +49,7 @@ func (d Decrypt) Execute() (map[string]string, error) {
 	if !ok {
 		return nil, fmt.Errorf("$BPI_EAR_SALT_PATH must be set")
 	}
-	salt, err := ioutil.ReadFile(file)
+	salt, err := os.ReadFile(file)
 	if err != nil {
 		return nil, fmt.Errorf("unable to open %s\n%w", file, err)
 	}
@@ -70,7 +69,7 @@ func (d Decrypt) Execute() (map[string]string, error) {
 		return nil, fmt.Errorf("$BPI_EAR_DECRYPTED_APPLICATION must be set")
 	}
 	if unix.Access(file, unix.W_OK) != nil {
-		d.Logger.Info("ERROR: Unable to decrypt application because %s is not writable", file)
+		d.Logger.Infof("ERROR: Unable to decrypt application because %s is not writable", file)
 		return nil, fmt.Errorf("unable to write to %s", file)
 	}
 	out := file
@@ -86,7 +85,7 @@ func (d Decrypt) Execute() (map[string]string, error) {
 		return nil, fmt.Errorf("unable to create encrypted reader\n%w", err)
 	}
 
-	if err := crush.ExtractTar(r, out, 0); err != nil {
+	if err := crush.Extract(r, out, 0); err != nil {
 		return nil, fmt.Errorf("unable to extract TAR %s to %s\n%w", in.Name(), out, err)
 	}
 
