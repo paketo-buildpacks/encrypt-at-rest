@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 the original author or authors.
+ * Copyright 2018-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -43,13 +42,8 @@ func testEncrypt(t *testing.T, context spec.G, it spec.S) {
 	)
 
 	it.Before(func() {
-		var err error
-
-		ctx.Application.Path, err = ioutil.TempDir("", "encrypt-application")
-		Expect(err).NotTo(HaveOccurred())
-
-		ctx.Layers.Path, err = ioutil.TempDir("", "encrypt-layers")
-		Expect(err).NotTo(HaveOccurred())
+		ctx.Application.Path = t.TempDir()
+		ctx.Layers.Path = t.TempDir()
 	})
 
 	it.After(func() {
@@ -58,7 +52,7 @@ func testEncrypt(t *testing.T, context spec.G, it spec.S) {
 	})
 
 	it("contributes encrypt", func() {
-		Expect(ioutil.WriteFile(filepath.Join(ctx.Application.Path, "fixture-marker"), []byte{}, 0644)).To(Succeed())
+		Expect(os.WriteFile(filepath.Join(ctx.Application.Path, "fixture-marker"), []byte{}, 0644)).To(Succeed())
 
 		master, err := hex.DecodeString("E48F0660412A993E62FB11CA086C2D353C95359AD3A3480E778FBA43DB694E60")
 		Expect(err).NotTo(HaveOccurred())
@@ -81,7 +75,7 @@ func testEncrypt(t *testing.T, context spec.G, it spec.S) {
 
 		Expect(layer.LaunchEnvironment["BPI_EAR_DECRYPTED_APPLICATION.default"]).To(Equal(ctx.Application.Path))
 
-		salt, err := ioutil.ReadFile(filepath.Join(layer.Path, "salt"))
+		salt, err := os.ReadFile(filepath.Join(layer.Path, "salt"))
 		Expect(err).NotTo(HaveOccurred())
 
 		var key [32]byte

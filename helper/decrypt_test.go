@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 the original author or authors.
+ * Copyright 2018-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -50,17 +49,16 @@ func testDecrypt(t *testing.T, context spec.G, it spec.S) {
 	it.Before(func() {
 		var err error
 
-		decryptedPath, err = ioutil.TempDir("", "decrypt-decrypted")
-		Expect(err).NotTo(HaveOccurred())
+		decryptedPath = t.TempDir()
 
-		f, err := ioutil.TempFile("", "decrypt-encrypted")
+		f, err := os.CreateTemp("", "decrypt-encrypted")
 		Expect(err).NotTo(HaveOccurred())
 		Expect(f.Close()).To(Succeed())
 		encryptedPath = f.Name()
 
 		key = "E48F0660412A993E62FB11CA086C2D353C95359AD3A3480E778FBA43DB694E60"
 
-		f, err = ioutil.TempFile("", "decrypt-salt")
+		f, err = os.CreateTemp("", "decrypt-salt")
 		Expect(err).NotTo(HaveOccurred())
 		Expect(f.Close()).To(Succeed())
 		saltPath = f.Name()
@@ -138,7 +136,7 @@ func testDecrypt(t *testing.T, context spec.G, it spec.S) {
 						var salt [32]byte
 						_, err = io.ReadFull(rand.Reader, salt[:])
 						Expect(err).NotTo(HaveOccurred())
-						Expect(ioutil.WriteFile(saltPath, salt[:], 0644)).To(Succeed())
+						Expect(os.WriteFile(saltPath, salt[:], 0644)).To(Succeed())
 
 						var key [32]byte
 						kdf := hkdf.New(sha256.New, primary, salt[:], nil)
@@ -152,7 +150,7 @@ func testDecrypt(t *testing.T, context spec.G, it spec.S) {
 						Expect(err).NotTo(HaveOccurred())
 
 						file := filepath.Join(decryptedPath, "fixture-marker")
-						Expect(ioutil.WriteFile(file, []byte{}, 0644)).To(Succeed())
+						Expect(os.WriteFile(file, []byte{}, 0644)).To(Succeed())
 						Expect(crush.CreateTar(w, decryptedPath)).To(Succeed())
 						Expect(os.RemoveAll(file)).To(Succeed())
 

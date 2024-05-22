@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 the original author or authors.
+ * Copyright 2018-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -68,7 +67,7 @@ func (e Encrypt) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 
 		e.Logger.Body("Writing salt")
 		file := filepath.Join(layer.Path, "salt")
-		if err := ioutil.WriteFile(file, salt[:], 0644); err != nil {
+		if err := os.WriteFile(file, salt[:], 0644); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to write %s\n%w", file, err)
 		}
 		layer.LaunchEnvironment.Default("BPI_EAR_SALT_PATH", file)
@@ -110,7 +109,7 @@ func (e Encrypt) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 	}
 
 	e.Logger.Header("Removing source code")
-	cs, err := ioutil.ReadDir(e.ApplicationPath)
+	cs, err := os.ReadDir(e.ApplicationPath)
 	if err != nil {
 		return libcnb.Layer{}, fmt.Errorf("unable to list children of %s\n%w", e.ApplicationPath, err)
 	}
