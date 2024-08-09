@@ -10,7 +10,7 @@ require (
 	github.com/sclevine/spec v1.4.0
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/crypto v0.26.0
-	golang.org/x/sys v0.23.0
+	golang.org/x/sys v0.24.0
 )
 
 require (
