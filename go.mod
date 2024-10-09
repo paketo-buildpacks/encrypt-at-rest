@@ -3,7 +3,7 @@ module github.com/paketo-buildpacks/encrypt-at-rest/v4
 go 1.23
 
 require (
-	github.com/buildpacks/libcnb v1.30.3
+	github.com/buildpacks/libcnb v1.30.4
 	github.com/minio/sio v0.4.1
 	github.com/onsi/gomega v1.34.2
 	github.com/paketo-buildpacks/libpak v1.71.0
