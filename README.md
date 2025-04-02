@@ -1,4 +1,8 @@
-# `gcr.io/paketo-buildpacks/encrypt-at-rest`
+# Paketo Buildpack for Encrypt at Rest
+
+## Buildpack ID: `paketo-buildpacks/encrypt-at-rest`
+## Registry URLs: `docker.io/paketobuildpacks/encrypt-at-rest`
+
 The Paketo Buildpack for Encrypt At Rest is a Cloud Native Buildpack that AES encrypts an application layer and then decrypts it at launch time.
 
 ## Behavior
