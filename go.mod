@@ -2,7 +2,7 @@ module github.com/paketo-buildpacks/encrypt-at-rest/v4
 
 go 1.24.0
 
-toolchain go1.24.9
+toolchain go1.24.10
 
 require (
 	github.com/buildpacks/libcnb v1.30.4
