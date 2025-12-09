@@ -6,7 +6,7 @@ toolchain go1.24.10
 
 require (
 	github.com/buildpacks/libcnb v1.30.4
-	github.com/minio/sio v0.4.2
+	github.com/minio/sio v0.4.3
 	github.com/onsi/gomega v1.38.2
 	github.com/paketo-buildpacks/libpak v1.73.0
 	github.com/sclevine/spec v1.4.0
