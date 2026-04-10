@@ -9,7 +9,7 @@ require (
 	github.com/paketo-buildpacks/libpak v1.73.0
 	github.com/sclevine/spec v1.4.0
 	github.com/stretchr/testify v1.11.1
-	golang.org/x/crypto v0.49.0
+	golang.org/x/crypto v0.50.0
 	golang.org/x/sys v0.43.0
 )
 
@@ -30,6 +30,6 @@ require (
 	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/net v0.52.0 // indirect
-	golang.org/x/text v0.35.0 // indirect
+	golang.org/x/text v0.36.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
