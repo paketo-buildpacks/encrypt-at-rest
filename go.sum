@@ -30,8 +30,8 @@ github.com/mattn/go-colorable v0.1.14/go.mod h1:6LmQG8QLFO4G5z1gPvYEzlUgJ2wF+stg
 github.com/mattn/go-isatty v0.0.8/go.mod h1:Iq45c/XA43vh69/j3iqttzPXn0bhXyGjM0Hdxcsrc5s=
 github.com/mattn/go-isatty v0.0.21 h1:xYae+lCNBP7QuW4PUnNG61ffM4hVIfm+zUzDuSzYLGs=
 github.com/mattn/go-isatty v0.0.21/go.mod h1:ZXfXG4SQHsB/w3ZeOYbR0PrPwLy+n6xiMrJlRFqopa4=
-github.com/minio/sio v0.4.3 h1:JqyID1XM86KwBZox5RAdLD4MLPIDoCY2cke2CXCJCkg=
-github.com/minio/sio v0.4.3/go.mod h1:4ANoe4CCXqnt1FCiLM0+vlBUhhWZzVOhYCz0069KtFc=
+github.com/minio/sio v0.5.0 h1:ze0354ySVYMzZK75IyCpH/Qy6ZBAoqGAuN4l9Ix/8Vo=
+github.com/minio/sio v0.5.0/go.mod h1:4ANoe4CCXqnt1FCiLM0+vlBUhhWZzVOhYCz0069KtFc=
 github.com/mitchellh/hashstructure/v2 v2.0.2 h1:vGKWl0YJqUNxE8d+h8f6NJLcCJrgbhC4NcD46KavDd4=
 github.com/mitchellh/hashstructure/v2 v2.0.2/go.mod h1:MG3aRVU/N29oo/V/IhBX8GR/zz4kQkprJgF2EVszyDE=
 github.com/onsi/ginkgo/v2 v2.28.0 h1:Rrf+lVLmtlBIKv6KrIGJCjyY8N36vDVcutbGJkyqjJc=
