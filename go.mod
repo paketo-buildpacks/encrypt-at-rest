@@ -1,6 +1,6 @@
 module github.com/paketo-buildpacks/encrypt-at-rest/v4
 
-go 1.26
+go 1.26.0
 
 require (
 	github.com/buildpacks/libcnb v1.30.4
@@ -9,7 +9,7 @@ require (
 	github.com/paketo-buildpacks/libpak v1.73.0
 	github.com/sclevine/spec v1.4.0
 	github.com/stretchr/testify v1.12.1
-	golang.org/x/crypto v0.55.0
+	golang.org/x/crypto v0.56.0
 	golang.org/x/sys v0.47.0
 )
 
