@@ -62,7 +62,7 @@ func (d Decrypt) Execute() (map[string]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("unable to open %s\n%w", file, err)
 	}
-	defer in.Close()
+	defer func() { _ = in.Close() }()
 
 	file, ok = os.LookupEnv("BPI_EAR_DECRYPTED_APPLICATION")
 	if !ok {
