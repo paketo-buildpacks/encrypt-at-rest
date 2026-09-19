@@ -83,7 +83,7 @@ func (e Encrypt) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 		if err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to open %s\n%w", file, err)
 		}
-		defer out.Close()
+		defer func() { _ = out.Close() }()
 
 		w, err := sio.EncryptWriter(out, sio.Config{Key: key[:]})
 		if err != nil {

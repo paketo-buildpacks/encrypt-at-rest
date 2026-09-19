@@ -54,11 +54,11 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 		e.Logger = b.Logger
 		result.Layers = append(result.Layers, e)
 
-		h, be := libpak.NewHelperLayer(context.Buildpack, "decrypt-application")
+		h, be := libpak.NewHelperLayer(context.Buildpack, "decrypt-application") //nolint:staticcheck // hold off on the BOM migration for now
 		h.Logger = b.Logger
 		result.Layers = append(result.Layers, h)
 		if be.Name != "" {
-			result.BOM.Entries = append(result.BOM.Entries, be)
+			result.BOM.Entries = append(result.BOM.Entries, be) //nolint:staticcheck // hold off on the BOM migration for now
 		}
 	}
 
